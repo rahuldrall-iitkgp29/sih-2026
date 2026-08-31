@@ -35,7 +35,7 @@ export async function executeCaption(state: SatQueryState): Promise<SatQueryStat
 
       const response = await axios.post(model.endpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 30000,
+        timeout: 240000,
       });
 
       if (response.data.success) {

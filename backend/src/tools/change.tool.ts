@@ -50,7 +50,7 @@ export async function executeChange(state: SatQueryState): Promise<SatQueryState
 
       const response = await axios.post(model.endpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 60000,
+        timeout: 240000,
       });
 
       if (response.data.success) {

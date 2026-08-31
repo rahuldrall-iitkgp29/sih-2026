@@ -98,7 +98,7 @@ class ModelRegistryService {
    */
   async refreshStatus(): Promise<void> {
     try {
-      const resp = await axios.get(`${env.PYTHON_ML_URL}/ml/models`, { timeout: 5000 });
+      const resp = await axios.get(`${env.PYTHON_ML_URL}/ml/models`, { timeout: 10000 });
       if (resp.data && resp.data.models) {
         for (const mlModel of resp.data.models) {
           const existing = this.models.get(mlModel.id);

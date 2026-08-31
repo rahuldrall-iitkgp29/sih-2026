@@ -9,14 +9,17 @@ import { api } from '../lib/api';
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const [backendStatus, setBackendStatus] = useState<'online' | 'offline' | 'checking'>('checking');
+  const [dbStatus, setDbStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
 
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        await api.getHealth();
+        const health = await api.getHealth();
         setBackendStatus('online');
+        setDbStatus(health.dependencies?.database === 'connected' ? 'connected' : 'disconnected');
       } catch (err) {
         setBackendStatus('offline');
+        setDbStatus('disconnected');
       }
     };
     checkHealth();
@@ -55,8 +58,29 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Status Indicator */}
-        <div className="flex items-center gap-3">
+        {/* Status Indicators */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Database Status */}
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900/80 border border-white/10 text-xs font-mono">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                dbStatus === 'connected'
+                  ? 'bg-emerald-400 animate-ping'
+                  : dbStatus === 'disconnected'
+                  ? 'bg-rose-500'
+                  : 'bg-slate-500'
+              }`}
+            />
+            <span className="text-slate-300 text-[11px]">
+              {dbStatus === 'connected'
+                ? 'MongoDB: Connected'
+                : dbStatus === 'disconnected'
+                ? 'MongoDB: Disconnected'
+                : 'MongoDB: Probing...'}
+            </span>
+          </div>
+
+          {/* Backend Status */}
           <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900/80 border border-white/10 text-xs font-mono">
             <span
               className={`w-2 h-2 rounded-full ${

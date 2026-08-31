@@ -11,7 +11,7 @@ router.get('/', async (_req: Request, res: Response) => {
 
   let mlServiceStatus = 'unavailable';
   try {
-    const resp = await axios.get(`${env.PYTHON_ML_URL}/health`, { timeout: 3000 });
+    const resp = await axios.get(`${env.PYTHON_ML_URL}/health`, { timeout: 5000 });
     if (resp.status === 200) mlServiceStatus = 'connected';
   } catch {
     mlServiceStatus = 'unavailable';

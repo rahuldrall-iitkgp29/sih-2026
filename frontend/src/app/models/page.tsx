@@ -123,31 +123,6 @@ export default function ModelsPage() {
         </div>
       </div>
 
-      {/* Transparent Fallback Hierarchy Banner */}
-      <div className="glass-panel p-5 rounded-2xl border border-cyan-500/20 bg-gradient-to-r from-cyan-950/20 via-slate-900/60 to-indigo-950/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 mt-0.5">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-200">
-              Two-Tier Transparent Execution Architecture
-            </h3>
-            <p className="text-xs text-slate-400 mt-0.5 max-w-2xl">
-              SatQuery prioritizes domain-specialist models served via the FastAPI layer. If a specialist model is not configured, it gracefully falls back to the configured Multimodal Vision AI provider while clearly labelling the model source in the UI.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 font-mono text-xs text-slate-300 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-white/10">
-          <span className="text-purple-400 font-semibold">Specialist ML</span>
-          <span>→</span>
-          <span className="text-blue-400 font-semibold">Vision AI Fallback</span>
-          <span>→</span>
-          <span className="text-rose-400 font-semibold">Graceful Notice</span>
-        </div>
-      </div>
-
       {/* Grid of Specialist Remote-Sensing Models */}
       <div>
         <h2 className="text-sm font-mono uppercase text-slate-400 font-semibold tracking-wider mb-4 flex items-center gap-2">

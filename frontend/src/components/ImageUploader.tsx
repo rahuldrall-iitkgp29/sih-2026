@@ -201,29 +201,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         </div>
       )}
 
-      {/* Pre-configured Demo Scenarios Quick Loader */}
-      <div className="pt-2 border-t border-white/5 flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-mono uppercase text-slate-400 font-semibold tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            Quick Demo Datasets
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-1.5">
-          {DEMO_SCENARIOS.map((demo) => (
-            <button
-              key={demo.id}
-              type="button"
-              onClick={() => onSelectDemoScenario(demo.id)}
-              className="text-left p-2 rounded-lg bg-slate-900/60 border border-white/5 hover:border-cyan-500/40 hover:bg-slate-800/60 transition-all text-xs"
-            >
-              <p className="font-semibold text-slate-300 truncate text-[11px]">{demo.title}</p>
-              <p className="text-[10px] text-slate-400 truncate mt-0.5">{demo.expectedTask}</p>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
