@@ -220,7 +220,27 @@ class VQAModel(RemoteSensingModel):
 
 ---
 
-## 🔮 8. MVP vs. Post-MVP Scope
+## ⏱️ 8. Timeout Configuration
+
+Since AI/ML model inference on satellite imagery can be time-intensive, timeout limits are configured across the full stack to prevent premature request failures:
+
+| Layer | Component | Timeout | File |
+|-------|-----------|---------|------|
+| **Frontend** | Axios API Client (all requests) | **5 min (300s)** | `frontend/src/lib/api.ts` |
+| **Backend → ML** | VQA Specialist Model | **4 min (240s)** | `backend/src/tools/vqa.tool.ts` |
+| **Backend → ML** | Caption Specialist Model | **4 min (240s)** | `backend/src/tools/caption.tool.ts` |
+| **Backend → ML** | Grounding Specialist Model | **4 min (240s)** | `backend/src/tools/grounding.tool.ts` |
+| **Backend → ML** | Change VQA Model | **4 min (240s)** | `backend/src/tools/changeVqa.tool.ts` |
+| **Backend → ML** | Change Detection Model | **4 min (240s)** | `backend/src/tools/change.tool.ts` |
+| **Backend → ML** | Optical-SAR Fusion Model | **4 min (240s)** | `backend/src/tools/opticalSar.tool.ts` |
+| **Backend** | Model Registry Status Refresh | **10s** | `backend/src/models/model.registry.ts` |
+| **Backend** | ML Service Health Check | **5s** | `backend/src/routes/health.routes.ts` |
+
+> **Note:** The frontend timeout (300s) is intentionally greater than backend tool timeouts (240s) so the browser never drops the connection before the backend finishes processing.
+
+---
+
+## 🔮 9. MVP vs. Post-MVP Scope
 
 | Feature | Status in MVP |
 |---|---|
