@@ -1,0 +1,39 @@
+{
+  "name": "satquery-ai-backend",
+  "version": "1.0.0",
+  "description": "SatQuery AI — Agentic backend for remote-sensing imagery analysis",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.44",
+    "@langchain/google-genai": "^0.2.12",
+    "@langchain/langgraph": "^0.2.60",
+    "@langchain/openai": "^0.5.10",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jspdf": "^2.5.2",
+    "mongoose": "^8.10.1",
+    "multer": "^1.4.5-lts.1",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "sharp": "^0.33.5",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.4",
+    "@types/uuid": "^10.0.0",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

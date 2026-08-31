@@ -1,0 +1,33 @@
+# BigEarthNet Adaptation — Training Configuration
+# This is a PLACEHOLDER for future fine-tuning work.
+
+dataset:
+  name: BigEarthNet-S2
+  path: ./data/bigearthnet/
+  bands: [B02, B03, B04, B08]  # RGB + NIR
+  patch_size: 120
+  num_classes: 19  # BigEarthNet labels
+
+model:
+  base_model: "google/vit-base-patch16-224"  # Example base
+  task: multi-label-classification
+  pretrained: true
+
+training:
+  epochs: 50
+  batch_size: 32
+  learning_rate: 1.0e-4
+  weight_decay: 0.01
+  warmup_steps: 500
+  optimizer: adamw
+  scheduler: cosine
+
+  # Data augmentation
+  augmentation:
+    random_flip: true
+    random_rotation: 15
+    color_jitter: 0.1
+
+output:
+  checkpoint_dir: ./checkpoints/bigearthnet/
+  log_dir: ./logs/bigearthnet/
