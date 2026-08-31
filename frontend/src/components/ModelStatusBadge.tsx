@@ -18,8 +18,8 @@ export const ModelStatusBadge: React.FC<ModelStatusBadgeProps> = ({ status }) =>
     case ModelStatus.LOADING:
     case 'loading':
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-spin" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-zinc-800 text-zinc-400 border border-zinc-700">
+          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-spin" />
           Loading
         </span>
       );

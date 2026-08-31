@@ -61,14 +61,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     <div className="flex flex-col gap-4">
       {/* Modality Selector Tabs */}
       <div className="flex flex-col gap-2">
-        <label className="text-xs font-mono uppercase text-slate-400 font-semibold tracking-wider flex items-center justify-between">
+        <label className="text-xs font-mono uppercase text-zinc-500 font-semibold tracking-wider flex items-center justify-between">
           <span>Analysis Workflow</span>
-          <span className="text-[10px] text-cyan-400 font-normal">
+          <span className="text-[10px] text-zinc-500 font-normal">
             Max {maxImages} {maxImages === 1 ? 'image' : 'images'}
           </span>
         </label>
 
-        <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-900/90 rounded-xl border border-white/10">
+        <div className="grid grid-cols-3 gap-1.5 p-1 bg-zinc-900 rounded-lg border border-white/6">
           <button
             type="button"
             onClick={() => {
@@ -77,8 +77,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             }}
             className={`py-2 px-2 rounded-lg text-xs font-medium transition-all text-center flex flex-col items-center gap-1 ${
               inputType === InputType.SINGLE_IMAGE
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-zinc-700 text-zinc-100 border border-zinc-600 shadow-sm'
+                : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60'
             }`}
           >
             <ImageIcon className="w-3.5 h-3.5" />
@@ -90,8 +90,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             onClick={() => setInputType(InputType.BI_TEMPORAL)}
             className={`py-2 px-2 rounded-lg text-xs font-medium transition-all text-center flex flex-col items-center gap-1 ${
               inputType === InputType.BI_TEMPORAL
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-zinc-700 text-zinc-100 border border-zinc-600 shadow-sm'
+                : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -103,8 +103,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             onClick={() => setInputType(InputType.OPTICAL_SAR)}
             className={`py-2 px-2 rounded-lg text-xs font-medium transition-all text-center flex flex-col items-center gap-1 ${
               inputType === InputType.OPTICAL_SAR
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-zinc-700 text-zinc-100 border border-zinc-600 shadow-sm'
+                : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -119,22 +119,22 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           {...getRootProps()}
           className={`border-2 border-dashed rounded-2xl p-6 transition-all text-center cursor-pointer flex flex-col items-center justify-center gap-3 ${
             isDragActive
-              ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/10'
-              : 'border-white/15 bg-slate-900/40 hover:border-cyan-500/50 hover:bg-slate-900/80'
+              ? 'border-zinc-400 bg-zinc-900/60'
+              : 'border-white/10 bg-zinc-900/30 hover:border-zinc-500/60 hover:bg-zinc-900/60'
           }`}
         >
           <input {...getInputProps()} />
-          <div className="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-            <UploadCloud className="w-6 h-6 animate-bounce" />
+          <div className="w-12 h-12 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-zinc-400">
+            <UploadCloud className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-200">
+            <p className="text-xs font-semibold text-zinc-200">
               {isDragActive
                 ? 'Drop remote-sensing imagery here'
                 : `Upload ${getSlotLabel(images.length)}`}
             </p>
-            <p className="text-[11px] text-slate-400 mt-1">
-              Supports <span className="text-cyan-400 font-mono">GeoTIFF</span>, TIFF, PNG, JPEG (Up to 50MB)
+            <p className="text-[11px] text-zinc-500 mt-1">
+              Supports <span className="text-zinc-300 font-mono">GeoTIFF</span>, TIFF, PNG, JPEG (Up to 50MB)
             </p>
           </div>
         </div>
@@ -143,17 +143,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       {/* Uploaded Images List */}
       {images.length > 0 && (
         <div className="flex flex-col gap-2.5">
-          <label className="text-xs font-mono uppercase text-slate-400 font-semibold tracking-wider">
+          <label className="text-xs font-mono uppercase text-zinc-500 font-semibold tracking-wider">
             Loaded Remote-Sensing Inputs ({images.length}/{maxImages})
           </label>
 
           {images.map((img, idx) => (
             <div
               key={img.id}
-              className="glass-panel p-3 rounded-xl flex items-center justify-between gap-3 border border-white/10 hover:border-cyan-500/30 transition-all"
+              className="bg-zinc-900/80 p-3 rounded-xl flex items-center justify-between gap-3 border border-white/7 hover:border-white/15 transition-all"
             >
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="w-12 h-12 rounded-lg bg-slate-950 border border-white/10 overflow-hidden flex-shrink-0 relative">
+                <div className="w-12 h-12 rounded-lg bg-zinc-950 border border-white/8 overflow-hidden flex-shrink-0 relative">
                   {img.previewUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -162,23 +162,23 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <FileImage className="w-6 h-6 text-slate-500 m-auto mt-3" />
+                    <FileImage className="w-6 h-6 text-zinc-600 m-auto mt-3" />
                   )}
                 </div>
 
                 <div className="overflow-hidden">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-semibold uppercase">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300 font-semibold uppercase">
                       {img.format || 'GeoTIFF'}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-mono truncate">
+                    <span className="text-[10px] text-zinc-500 font-mono truncate">
                       {getSlotLabel(idx)}
                     </span>
                   </div>
-                  <p className="text-xs font-medium text-slate-200 truncate mt-0.5" title={img.originalName}>
+                  <p className="text-xs font-medium text-zinc-200 truncate mt-0.5" title={img.originalName}>
                     {img.originalName}
                   </p>
-                  <p className="text-[11px] text-slate-400 font-mono flex items-center gap-2 mt-0.5">
+                  <p className="text-[11px] text-zinc-500 font-mono flex items-center gap-2 mt-0.5">
                     <span>{formatBytes(img.size)}</span>
                     {img.width && img.height && (
                       <span>• {img.width}×{img.height} px</span>
@@ -191,7 +191,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <button
                 type="button"
                 onClick={() => removeImage(img.id)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-950/30 transition-colors"
                 title="Remove Image"
               >
                 <Trash2 className="w-4 h-4" />

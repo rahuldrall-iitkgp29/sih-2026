@@ -94,20 +94,20 @@ export default function ModelsPage() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 lg:px-8 py-8 flex flex-col gap-8">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/6 pb-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-100 flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-cyan-400" />
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-100 flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-zinc-500" />
             <span>Model Registry & Status Dashboard</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-zinc-500 mt-1">
             Live catalog of pretrained remote-sensing specialist models and fallback general AI providers.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           {lastRefreshed && (
-            <span className="text-[11px] font-mono text-slate-500">
+            <span className="text-[11px] font-mono text-zinc-600">
               Updated: {lastRefreshed}
             </span>
           )}
@@ -115,9 +115,9 @@ export default function ModelsPage() {
             type="button"
             onClick={fetchModels}
             disabled={isLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-mono border border-white/8 transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-zinc-400' : ''}`} />
             <span>Refresh Status</span>
           </button>
         </div>
@@ -125,8 +125,8 @@ export default function ModelsPage() {
 
       {/* Grid of Specialist Remote-Sensing Models */}
       <div>
-        <h2 className="text-sm font-mono uppercase text-slate-400 font-semibold tracking-wider mb-4 flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-cyan-400" />
+        <h2 className="text-sm font-mono uppercase text-zinc-500 font-semibold tracking-wider mb-4 flex items-center gap-2">
+          <Terminal className="w-4 h-4 text-zinc-500" />
           Pretrained Remote-Sensing Specialist Models ({models.length})
         </h2>
 
@@ -134,38 +134,38 @@ export default function ModelsPage() {
           {models.map((model) => (
             <div
               key={model.id}
-              className="glass-panel p-5 rounded-2xl border border-white/10 flex flex-col justify-between gap-4 hover:border-cyan-500/30 transition-all"
+              className="bg-zinc-900 p-5 rounded-xl border border-white/7 flex flex-col justify-between gap-4 hover:border-white/15 transition-all"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-xs font-mono font-bold text-slate-200 uppercase tracking-tight">
+                  <span className="text-xs font-mono font-bold text-zinc-200 uppercase tracking-tight">
                     {model.name}
                   </span>
                   <ModelStatusBadge status={model.status} />
                 </div>
 
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-zinc-500 mt-2 leading-relaxed">
                   {model.description}
                 </p>
               </div>
 
               <div className="pt-3 border-t border-white/5 flex flex-col gap-2 font-mono text-[11px]">
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-zinc-500">
                   <span>Supported Tasks:</span>
-                  <span className="text-cyan-400 font-semibold">{model.tasks.join(', ')}</span>
+                  <span className="text-zinc-300 font-semibold">{model.tasks.join(', ')}</span>
                 </div>
 
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-zinc-500">
                   <span>Input Modality:</span>
-                  <span className="text-slate-300">{model.modalities.join(', ')}</span>
+                  <span className="text-zinc-300">{model.modalities.join(', ')}</span>
                 </div>
 
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-zinc-500">
                   <span>Config Key:</span>
-                  <span className="text-slate-500 truncate max-w-[160px]">{model.modelIdentifier}</span>
+                  <span className="text-zinc-600 truncate max-w-[160px]">{model.modelIdentifier}</span>
                 </div>
 
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-zinc-500">
                   <span>Fallback Active:</span>
                   <span className="text-emerald-400">✓ Enabled</span>
                 </div>

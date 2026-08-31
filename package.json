@@ -4,7 +4,7 @@
   "description": "SatQuery AI — Agentic Vision-Language Assistant for Remote-Sensing Imagery (SIH 2026)",
   "private": true,
   "scripts": {
-    "dev:ml": "cd ml-service && .\\venv\\Scripts\\uvicorn app.main:app --reload --reload-dir app --port 8000",
+    "dev:ml": "cd ml-service && (./venv/bin/uvicorn app.main:app --reload --reload-dir app --port 8000 || uvicorn app.main:app --reload --reload-dir app --port 8000)",
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
     "dev": "concurrently \"npm run dev:ml\" \"npm run dev:backend\" \"npm run dev:frontend\"",

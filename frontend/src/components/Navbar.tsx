@@ -34,10 +34,10 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 glass-panel border-b border-white/10 px-4 lg:px-8 py-3">
+    <header className="sticky top-0 z-50 bg-[#0f0f0f] border-b border-white/6 px-4 lg:px-8 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Navigation links */}
-        <nav className="flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-white/5">
+        <nav className="flex items-center gap-1 bg-zinc-900/60 p-1 rounded-lg border border-white/5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.href === '/' ? pathname === '/' || pathname === '/dashboard' : pathname === item.href;
@@ -47,8 +47,8 @@ export const Navbar: React.FC = () => {
                 href={item.href}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-cyan-500/15 text-cyan-400 shadow-sm border border-cyan-500/30'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'bg-white/8 text-zinc-100 border border-white/12'
+                    : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -61,17 +61,17 @@ export const Navbar: React.FC = () => {
         {/* Status Indicators */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Database Status */}
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900/80 border border-white/10 text-xs font-mono">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-950 border border-white/8 text-xs font-mono">
             <span
               className={`w-2 h-2 rounded-full ${
                 dbStatus === 'connected'
-                  ? 'bg-emerald-400 animate-ping'
+                  ? 'bg-emerald-500'
                   : dbStatus === 'disconnected'
                   ? 'bg-rose-500'
-                  : 'bg-slate-500'
+                  : 'bg-zinc-600'
               }`}
             />
-            <span className="text-slate-300 text-[11px]">
+            <span className="text-zinc-400 text-[11px]">
               {dbStatus === 'connected'
                 ? 'MongoDB: Connected'
                 : dbStatus === 'disconnected'
@@ -81,17 +81,17 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Backend Status */}
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900/80 border border-white/10 text-xs font-mono">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-950 border border-white/8 text-xs font-mono">
             <span
               className={`w-2 h-2 rounded-full ${
                 backendStatus === 'online'
-                  ? 'bg-emerald-400 animate-ping'
+                  ? 'bg-emerald-500'
                   : backendStatus === 'offline'
                   ? 'bg-amber-500'
-                  : 'bg-slate-500'
+                  : 'bg-zinc-600'
               }`}
             />
-            <span className="text-slate-300 text-[11px]">
+            <span className="text-zinc-400 text-[11px]">
               {backendStatus === 'online'
                 ? 'Backend: Connected'
                 : backendStatus === 'offline'

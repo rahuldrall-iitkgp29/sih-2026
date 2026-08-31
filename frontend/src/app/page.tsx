@@ -196,15 +196,15 @@ function DashboardContent() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 lg:px-8 py-6 flex flex-col gap-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/6 pb-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-100 flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-100 flex items-center gap-2">
             <span>SatQuery Analysis Workspace</span>
-            <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-white/8">
               Interactive Console
             </span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-zinc-500 mt-1">
             Agentic multi-modal remote-sensing inquiry, temporal change analysis, and sensor fusion.
           </p>
         </div>
@@ -212,7 +212,7 @@ function DashboardContent() {
 
       {/* Error Alert (if any) */}
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
+        <div className="p-3.5 rounded-lg bg-rose-950/60 border border-rose-800/40 text-rose-300 text-xs flex items-center justify-between">
           <span>⚠️ {errorMessage}</span>
           <button
             type="button"
@@ -228,7 +228,7 @@ function DashboardContent() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Panel 1: Left - Image Uploader & Demo Scenarios (4 cols) */}
         <div className="lg:col-span-4 flex flex-col gap-4">
-          <div className="glass-panel p-4 rounded-2xl border border-white/10 shadow-xl">
+          <div className="bg-zinc-900 p-4 rounded-xl border border-white/7">
             <ImageUploader
               inputType={inputType}
               setInputType={setInputType}
@@ -254,7 +254,7 @@ function DashboardContent() {
 
           {/* Right/Bottom Panel: Query Box & Results */}
           <div className="flex flex-col gap-6">
-            <div className="glass-panel p-4 rounded-2xl border border-white/10 shadow-xl">
+            <div className="bg-zinc-900 p-4 rounded-xl border border-white/7">
               <QueryPanel
                 query={query}
                 setQuery={setQuery}
@@ -275,7 +275,7 @@ function DashboardContent() {
 
 export default function RootPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-xs font-mono text-slate-400">Loading SatQuery Console...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-xs font-mono text-zinc-500">Loading SatQuery Console...</div>}>
       <DashboardContent />
     </Suspense>
   );
