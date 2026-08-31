@@ -1,77 +1,96 @@
 """
 VQA Model Adapter.
-
-To integrate a real pretrained model:
-1. Set VQA_MODEL_ID (e.g., "Salesforce/blip2-opt-2.7b" or a RS-specific VQA model)
-2. Implement load() to load the model using transformers, torch, etc.
-3. Implement predict() to run inference
 """
-
 from typing import Dict, Any
-from app.models.base_model import RemoteSensingModel, ModelInput, ModelOutput
-
+from app.models.base_model import RemoteSensingModel, ModelInput, ModelOutput, ModelStatus
+import numpy as np
+from PIL import Image
+import os
 
 class VQAModel(RemoteSensingModel):
-    """Visual Question Answering model adapter for remote-sensing imagery."""
+    """Visual Question Answering model adapter for remote-sensing imagery using GeoChat."""
 
     def load(self) -> None:
         if not self.is_configured:
             return
 
-        # ──────────────────────────────────────────────
-        # INTEGRATION POINT: Load your pretrained VQA model here
-        # Example with HuggingFace transformers:
-        #
-        # from transformers import AutoProcessor, AutoModelForVisualQuestionAnswering
-        # self._processor = AutoProcessor.from_pretrained(self.model_id)
-        # self._model = AutoModelForVisualQuestionAnswering.from_pretrained(self.model_id)
-        # self._model.to(self.device)
-        # self._loaded = True
-        # ──────────────────────────────────────────────
+        print(f"  [VQA] Preparing GeoChat VQA model adapter for ID: {self.model_id}, Path: {self.model_path}")
+        
+        self._processor = None
+        self._model = None
+        
+        # We do not actually load the model yet since the download might be incomplete.
+        # But we prepare the logic.
+        if self.model_path and not os.path.exists(os.path.join(self.model_path, "config.json")):
+            self.set_error("GeoChat VQA model is not ready.")
+            return
+            
+        # self._status = ModelStatus.READY # uncomment when we actually implement loading
+        self.set_error("GeoChat VQA model is not ready.")
 
-        print(f"  VQA model configured with ID: {self.model_id}")
-        # Uncomment above and set self._loaded = True when model is ready
+    def preprocess_image(self, image_array: np.ndarray) -> Image.Image:
+        """
+        Convert numpy array to PIL Image and prepare for GeoChat.
+        """
+        image = Image.fromarray(image_array)
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+        return image
 
     def predict(self, input_data: ModelInput) -> ModelOutput:
-        if not self._loaded:
+        if not self.is_loaded:
             return ModelOutput(
                 success=False,
-                model="vqa-model",
-                task="VQA",
+                status=ModelStatus.NOT_CONFIGURED if not self.is_configured else self.status,
+                model=self.model_id,
+                task="vqa",
                 confidence=0.0,
-                data={"error": "Model not loaded"},
+                message="GeoChat VQA model is not ready.",
             )
 
-        # ──────────────────────────────────────────────
-        # INTEGRATION POINT: Run VQA inference
-        #
-        # image = input_data.images[0]
-        # query = input_data.query
-        # inputs = self._processor(image, query, return_tensors="pt").to(self.device)
-        # outputs = self._model.generate(**inputs)
-        # answer = self._processor.decode(outputs[0], skip_special_tokens=True)
-        #
-        # return ModelOutput(
-        #     success=True,
-        #     model=self.model_id,
-        #     task="VQA",
-        #     confidence=0.85,
-        #     data={"answer": answer, "evidence": []},
-        # )
-        # ──────────────────────────────────────────────
+        try:
+            image = self.preprocess_image(input_data.images[0])
+            query = input_data.query
 
-        return ModelOutput(
-            success=False,
-            model=self.model_id,
-            task="VQA",
-            confidence=0.0,
-            data={"error": "Inference not implemented"},
-        )
+            # ──────────────────────────────────────────────
+            # GEOCHAT INFERENCE LOGIC (To be uncommented when model is ready)
+            # ──────────────────────────────────────────────
+            # inputs = self._processor(image, query, return_tensors="pt").to(self.device, self.dtype)
+            # outputs = self._model.generate(**inputs)
+            # answer = self._processor.decode(outputs[0], skip_special_tokens=True)
+            #
+            # return ModelOutput(
+            #     success=True,
+            #     status=ModelStatus.READY,
+            #     model="GeoChat",
+            #     task="vqa",
+            #     confidence=0.85, 
+            #     data={"answer": answer, "evidence": []},
+            # )
+            # ──────────────────────────────────────────────
+            
+            return ModelOutput(
+                success=False,
+                status=ModelStatus.ERROR,
+                model="GeoChat",
+                task="vqa",
+                confidence=0.0,
+                message="Inference not implemented yet (Waiting for download).",
+            )
+        except Exception as e:
+             return ModelOutput(
+                success=False,
+                status=ModelStatus.ERROR,
+                model="GeoChat",
+                task="vqa",
+                confidence=0.0,
+                message=f"Inference error: {str(e)}",
+            )
 
     def get_metadata(self) -> Dict[str, Any]:
         return {
-            "name": "Remote Sensing VQA",
-            "task": "VQA",
+            "name": "GeoChat VQA",
+            "task": "vqa",
             "modalities": ["SINGLE_IMAGE"],
-            "description": "Visual Question Answering for remote-sensing imagery",
+            "description": "Visual Question Answering for remote-sensing imagery using GeoChat",
         }

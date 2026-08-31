@@ -1,25 +1,25 @@
-"""Change VQA route — POST /ml/change-vqa"""
 from fastapi import APIRouter, UploadFile, File, Form
 from app.models.registry import model_registry
-from app.models.base_model import ModelInput
-from app.utils.image_processing import load_image_from_bytes
+from app.models.base_model import ModelInput, ModelStatus
+from app.utils.image_processing import validate_image_pair
 
 router = APIRouter()
 
 @router.post("/change-vqa")
-async def change_vqa_endpoint(
-    image1: UploadFile = File(...), image2: UploadFile = File(...),
-    query: str = Form(...),
-):
+async def change_vqa_endpoint(image_t1: UploadFile = File(...), image_t2: UploadFile = File(...), query: str = Form(...)):
     model = model_registry.get("change-vqa")
     if not model or not model.is_loaded:
-        return {"success": False, "model": "change-vqa", "task": "CHANGE_VQA",
-                "error": "Change VQA model not loaded", "confidence": 0.0}
+        status = model.status if model else ModelStatus.NOT_CONFIGURED
+        msg = "No Change VQA specialist model is configured." if status == ModelStatus.NOT_CONFIGURED else f"Change VQA model is currently {status}"
+        return {"success": False, "task": "change-vqa", "status": status, "model": model.model_id if model else None, "message": msg}
 
-    img1 = load_image_from_bytes(await image1.read())
-    img2 = load_image_from_bytes(await image2.read())
-    result = model.predict(ModelInput(images=[img1, img2], query=query))
-
-    return {"success": result.success, "model": result.model, "task": result.task,
-            "answer": result.data.get("answer", ""), "confidence": result.confidence,
-            "evidence": result.data.get("evidence", []), "metadata": result.metadata}
+    try:
+        b1, b2 = await image_t1.read(), await image_t2.read()
+        img1, img2 = validate_image_pair(b1, b2, image_t1.filename, image_t2.filename)
+        input_data = ModelInput(images=[img1, img2], query=query)
+        result = model.predict(input_data)
+        return {"success": result.success, "task": result.task, "status": ModelStatus.READY, "model": result.model, "answer": result.data.get("answer", ""), "confidence": result.confidence, "metadata": result.metadata}
+    except ValueError as ve:
+        return {"success": False, "task": "change-vqa", "status": ModelStatus.ERROR, "model": model.model_id, "message": f"Validation error: {str(ve)}"}
+    except Exception as e:
+        return {"success": False, "task": "change-vqa", "status": ModelStatus.ERROR, "model": model.model_id, "message": f"Inference error: {str(e)}"}

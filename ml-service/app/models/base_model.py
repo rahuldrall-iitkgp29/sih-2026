@@ -16,6 +16,13 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import numpy as np
 
+class ModelStatus:
+    NOT_CONFIGURED = "NOT_CONFIGURED"
+    LOADING = "LOADING"
+    READY = "READY"
+    BUSY = "BUSY"
+    ERROR = "ERROR"
+    OFFLINE = "OFFLINE"
 
 @dataclass
 class ModelInput:
@@ -24,17 +31,17 @@ class ModelInput:
     query: Optional[str] = None
     parameters: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class ModelOutput:
     """Standard output from model inference."""
     success: bool
+    status: str
     model: str
     task: str
-    confidence: float
+    confidence: float = 0.0
+    message: str = ""
     data: Dict[str, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
-
 
 class RemoteSensingModel(ABC):
     """Abstract base class for all remote-sensing model adapters."""
@@ -43,14 +50,18 @@ class RemoteSensingModel(ABC):
         self.model_id = model_id
         self.model_path = model_path
         self.device = device
-        self._loaded = False
+        self._status = ModelStatus.NOT_CONFIGURED
+        self._error_message = ""
         self._model = None
+        
+        if self.is_configured:
+            self._status = ModelStatus.OFFLINE # default state before loading
 
     @abstractmethod
     def load(self) -> None:
         """
         Load the model weights into memory.
-        Should set self._loaded = True on success.
+        Should set self._status = ModelStatus.READY on success.
         """
         pass
 
@@ -71,7 +82,7 @@ class RemoteSensingModel(ABC):
 
     @property
     def is_loaded(self) -> bool:
-        return self._loaded
+        return self._status in [ModelStatus.READY, ModelStatus.BUSY]
 
     @property
     def is_configured(self) -> bool:
@@ -80,8 +91,14 @@ class RemoteSensingModel(ABC):
 
     @property
     def status(self) -> str:
-        if self._loaded:
-            return "loaded"
-        if self.is_configured:
-            return "configured_not_loaded"
-        return "not_configured"
+        if not self.is_configured:
+            return ModelStatus.NOT_CONFIGURED
+        return self._status
+    
+    @status.setter
+    def status(self, value: str):
+        self._status = value
+
+    def set_error(self, message: str):
+        self._status = ModelStatus.ERROR
+        self._error_message = message

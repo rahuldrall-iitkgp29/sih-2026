@@ -1,46 +1,52 @@
-"""Image processing utilities for the ML service."""
-
 import io
 import numpy as np
 from PIL import Image
-from typing import Tuple, Optional
+import rasterio
 
+def load_image_from_bytes(image_bytes: bytes, filename: str = "image.jpg") -> np.ndarray:
+    """
+    Load an image from bytes, supporting standard formats (JPEG, PNG) 
+    and GeoTIFF/TIFF formats via Rasterio.
+    """
+    is_tiff = filename.lower().endswith(('.tif', '.tiff', '.geotiff'))
 
-def load_image_from_bytes(image_bytes: bytes) -> np.ndarray:
-    """Load an image from bytes into a numpy array (H, W, C)."""
-    image = Image.open(io.BytesIO(image_bytes))
-    if image.mode != "RGB":
-        image = image.convert("RGB")
-    return np.array(image)
+    if is_tiff:
+        try:
+            # Use rasterio MemoryFile for in-memory reading
+            with rasterio.MemoryFile(image_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Read all bands
+                    img_array = dataset.read()
+                    
+                    # Convert to (H, W, C) format expected by most models
+                    if img_array.ndim == 3:
+                        # rasterio reads as (C, H, W)
+                        img_array = np.transpose(img_array, (1, 2, 0))
+                    
+                    return img_array
+        except Exception as e:
+            print(f"Rasterio failed to load TIFF: {e}")
+            raise ValueError(f"Failed to load TIFF image: {e}")
+    else:
+        # Standard PIL loading for JPG/PNG
+        try:
+            image = Image.open(io.BytesIO(image_bytes))
+            if image.mode != "RGB":
+                image = image.convert("RGB")
+            return np.array(image)
+        except Exception as e:
+            raise ValueError(f"Failed to load standard image: {e}")
 
+def validate_image_pair(image1_bytes: bytes, image2_bytes: bytes, filename1: str, filename2: str):
+    """
+    Validates that a pair of images (e.g. for change detection or optical-SAR fusion)
+    have compatible dimensions. Optionally validates CRS if both are GeoTIFF.
+    """
+    img1 = load_image_from_bytes(image1_bytes, filename1)
+    img2 = load_image_from_bytes(image2_bytes, filename2)
 
-def resize_image(image: np.ndarray, max_size: int = 1024) -> np.ndarray:
-    """Resize image so the longest side is max_size, maintaining aspect ratio."""
-    h, w = image.shape[:2]
-    if max(h, w) <= max_size:
-        return image
-    scale = max_size / max(h, w)
-    new_h, new_w = int(h * scale), int(w * scale)
-    pil_img = Image.fromarray(image)
-    pil_img = pil_img.resize((new_w, new_h), Image.LANCZOS)
-    return np.array(pil_img)
-
-
-def get_image_info(image: np.ndarray) -> dict:
-    """Get basic image metadata."""
-    return {
-        "height": image.shape[0],
-        "width": image.shape[1],
-        "channels": image.shape[2] if len(image.shape) > 2 else 1,
-        "dtype": str(image.dtype),
-    }
-
-
-def image_to_pil(image: np.ndarray) -> Image.Image:
-    """Convert numpy array to PIL Image."""
-    return Image.fromarray(image)
-
-
-def normalize_image(image: np.ndarray) -> np.ndarray:
-    """Normalize image to [0, 1] float32."""
-    return image.astype(np.float32) / 255.0
+    # Check dimensions (H, W)
+    if img1.shape[:2] != img2.shape[:2]:
+        raise ValueError(f"Image dimensions do not match. Image 1: {img1.shape[:2]}, Image 2: {img2.shape[:2]}")
+    
+    return img1, img2

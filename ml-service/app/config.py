@@ -10,6 +10,7 @@ class ModelConfig:
     model_id: str = ""
     model_path: str = ""
     device: str = "cpu"
+    dtype: str = ""
 
 
 @dataclass
@@ -24,6 +25,8 @@ class Config:
     vqa: ModelConfig = field(default_factory=lambda: ModelConfig(
         model_id=os.getenv("VQA_MODEL_ID", ""),
         model_path=os.getenv("VQA_MODEL_PATH", ""),
+        device=os.getenv("VQA_DEVICE", "cpu"),
+        dtype=os.getenv("VQA_DTYPE", ""),
     ))
     caption: ModelConfig = field(default_factory=lambda: ModelConfig(
         model_id=os.getenv("CAPTION_MODEL_ID", ""),

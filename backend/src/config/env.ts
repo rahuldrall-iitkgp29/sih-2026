@@ -21,6 +21,14 @@ const envSchema = z.object({
   // Python ML Service
   PYTHON_ML_URL: z.string().default('http://localhost:8000'),
 
+  // Task-specific ML Worker URLs (For Multi-Laptop GPU)
+  VQA_ML_URL: z.string().optional(),
+  CAPTION_ML_URL: z.string().optional(),
+  GROUNDING_ML_URL: z.string().optional(),
+  CHANGE_ML_URL: z.string().optional(),
+  CHANGE_VQA_ML_URL: z.string().optional(),
+  OPTICAL_SAR_ML_URL: z.string().optional(),
+
   // Specialist model configuration
   VQA_MODEL_ID: z.string().default(''),
   VQA_MODEL_PATH: z.string().default(''),

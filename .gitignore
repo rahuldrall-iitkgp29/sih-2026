@@ -90,3 +90,6 @@ Thumbs.db
 # Docker
 .docker/
 docker-compose.override.yml
+
+#ai models
+ml-service/models/downloaded/

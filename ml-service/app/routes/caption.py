@@ -1,8 +1,6 @@
-"""Caption route — POST /ml/caption"""
-# pyrefly: ignore [missing-import]
 from fastapi import APIRouter, UploadFile, File
 from app.models.registry import model_registry
-from app.models.base_model import ModelInput
+from app.models.base_model import ModelInput, ModelStatus
 from app.utils.image_processing import load_image_from_bytes
 
 router = APIRouter()
@@ -11,13 +9,15 @@ router = APIRouter()
 async def caption_endpoint(image: UploadFile = File(...)):
     model = model_registry.get("rs-caption")
     if not model or not model.is_loaded:
-        return {"success": False, "model": "rs-caption", "task": "CAPTION",
-                "error": "Caption model not loaded", "confidence": 0.0}
+        status = model.status if model else ModelStatus.NOT_CONFIGURED
+        msg = "No Caption specialist model is configured." if status == ModelStatus.NOT_CONFIGURED else f"Caption model is currently {status}"
+        return {"success": False, "task": "caption", "status": status, "model": model.model_id if model else None, "message": msg}
 
-    image_bytes = await image.read()
-    img_array = load_image_from_bytes(image_bytes)
-    result = model.predict(ModelInput(images=[img_array]))
-
-    return {"success": result.success, "model": result.model, "task": result.task,
-            "caption": result.data.get("caption", ""), "confidence": result.confidence,
-            "metadata": result.metadata}
+    try:
+        image_bytes = await image.read()
+        img_array = load_image_from_bytes(image_bytes, image.filename)
+        input_data = ModelInput(images=[img_array])
+        result = model.predict(input_data)
+        return {"success": result.success, "task": result.task, "status": ModelStatus.READY, "model": result.model, "caption": result.data.get("caption", ""), "confidence": result.confidence, "metadata": result.metadata}
+    except Exception as e:
+        return {"success": False, "task": "caption", "status": ModelStatus.ERROR, "model": model.model_id, "message": f"Inference error: {str(e)}"}

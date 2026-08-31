@@ -6,7 +6,7 @@ The Node.js backend queries this registry via GET /ml/models.
 """
 
 from typing import Dict, List, Any, Optional
-from app.models.base_model import RemoteSensingModel
+from app.models.base_model import RemoteSensingModel, ModelStatus
 from app.models.vqa_model import VQAModel
 from app.models.caption_model import CaptionModel
 from app.models.grounding_model import GroundingModel
@@ -14,6 +14,7 @@ from app.models.change_model import ChangeModel
 from app.models.change_vqa_model import ChangeVQAModel
 from app.models.optical_sar_model import OpticalSARModel
 from app.config import config
+import os
 
 
 class ModelRegistry:
@@ -64,10 +65,19 @@ class ModelRegistry:
             if model.is_configured:
                 try:
                     print(f"  Loading {model_id}...")
+                    model.status = ModelStatus.LOADING
                     model.load()
                     print(f"  [+] {model_id} loaded successfully")
+                except RuntimeError as e:
+                    if "out of memory" in str(e).lower() or "cuda" in str(e).lower():
+                        print(f"  [!] {model_id} failed to load (GPU_ERROR): {e}")
+                        model.set_error("GPU_OUT_OF_MEMORY" if "out of memory" in str(e).lower() else "GPU_ERROR")
+                    else:
+                        print(f"  [!] {model_id} failed to load: {e}")
+                        model.set_error(str(e))
                 except Exception as e:
                     print(f"  [!] {model_id} failed to load: {e}")
+                    model.set_error(str(e))
             else:
                 print(f"  [-] {model_id} not configured (skipped)")
 
@@ -82,6 +92,9 @@ class ModelRegistry:
             meta["id"] = model_id
             meta["status"] = model.status
             meta["model_id"] = model.model_id
+            
+            # add worker/device context
+            meta["device"] = model.device
             result.append(meta)
         return result
 

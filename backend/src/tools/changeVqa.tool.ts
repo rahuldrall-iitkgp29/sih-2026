@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { MLClient } from '../services/ml-client';
+import FormData from 'form-data';
 import { SatQueryState, addTraceStep } from '../agents/state';
 import { ModelSource } from '../types';
 import { modelRegistry } from '../models/model.registry';
@@ -32,31 +33,48 @@ export async function executeChangeVqa(state: SatQueryState): Promise<SatQuerySt
   const model = modelRegistry.findModel(state.detectedTask!, state.inputType);
 
   // Try specialist
-  if (model && model.status === 'available') {
-    try {
-      const formData = new FormData();
-      const buf1 = require('fs').readFileSync(image1.path);
-      const buf2 = require('fs').readFileSync(image2.path);
-      formData.append('image1', new Blob([buf1]), image1.filename);
-      formData.append('image2', new Blob([buf2]), image2.filename);
-      formData.append('query', state.query);
-
-      const response = await axios.post(model.endpoint, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 240000,
-      });
-
-      if (response.data.success) {
-        state.answer = response.data.answer;
-        state.confidence = response.data.confidence;
-        state.modelUsed = response.data.model;
-        state.modelSource = ModelSource.SPECIALIST;
-        state.evidence = response.data.evidence || [];
-        addTraceStep(state, 'Specialist Change VQA executed', 'completed');
-        return state;
+  if (model && (model.status === 'available' || model.status === 'AVAILABLE')) {
+    const formData = new FormData();
+    // Assuming image paths are added appropriately, depending on the tool.
+    // For single images:
+    if (state.images.length > 0) {
+      const fs = require('fs');
+      for (let i = 0; i < state.images.length; i++) {
+        const imageBuffer = fs.readFileSync(state.images[i].path);
+        // Note: Python FastAPI expects image_t1, image_t2 for change, optical_image/sar_image etc.
+        // We will just append them using standard form data conventions or check tool type.
+        let fieldName = 'image';
+        if (state.detectedTask === 'CHANGE_ANALYSIS' || state.detectedTask === 'CHANGE_VQA') {
+            fieldName = i === 0 ? 'image_t1' : 'image_t2';
+        } else if (state.detectedTask === 'OPTICAL_SAR_ANALYSIS') {
+            fieldName = i === 0 ? 'optical_image' : 'sar_image';
+        }
+        formData.append(fieldName, imageBuffer, state.images[i].filename);
       }
-    } catch (error: any) {
-      logger.warn(`Specialist Change VQA failed: ${error.message}`);
+    }
+    
+    if (state.query && state.detectedTask !== 'CAPTION' && state.detectedTask !== 'CHANGE_ANALYSIS') {
+        formData.append('query', state.query);
+    }
+
+    const response = await MLClient.executeTask(model.endpoint, state.detectedTask!, formData);
+
+    if (response.success) {
+      state.answer = response.answer || response.caption || response.change_detected;
+      state.confidence = response.confidence;
+      state.modelUsed = response.model;
+      state.modelSource = ModelSource.SPECIALIST;
+      state.evidence = response.evidence || [];
+      const { addTraceStep } = require('../agents/state');
+      addTraceStep(state, `Specialist ${state.detectedTask} model executed`, 'completed');
+      return state;
+    } else {
+      const { logger } = require('../utils/logger');
+      logger.warn(`Specialist model failed: ${response.message} (Status: ${response.status}). Falling back...`);
+      const { addTraceStep } = require('../agents/state');
+      addTraceStep(state, `Specialist model`, 'failed', response.message);
+    }
+  }`);
       addTraceStep(state, 'Specialist Change VQA', 'failed', 'Falling back');
     }
   }
