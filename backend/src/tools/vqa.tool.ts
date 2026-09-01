@@ -69,9 +69,6 @@ export async function executeVQA(state: SatQueryState): Promise<SatQueryState> {
       const { addTraceStep } = require('../agents/state');
       addTraceStep(state, `Specialist model`, 'failed', response.message);
     }
-  }. Falling back to vision AI.`);
-      addTraceStep(state, 'Specialist VQA model', 'failed', 'Falling back to vision AI');
-    }
   }
 
   // Fallback to vision AI

@@ -69,9 +69,6 @@ export async function executeCaption(state: SatQueryState): Promise<SatQueryStat
       const { addTraceStep } = require('../agents/state');
       addTraceStep(state, `Specialist model`, 'failed', response.message);
     }
-  }`);
-      addTraceStep(state, 'Specialist caption model', 'failed', 'Falling back');
-    }
   }
 
   // Fallback

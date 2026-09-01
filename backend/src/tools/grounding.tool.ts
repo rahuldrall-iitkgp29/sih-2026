@@ -72,9 +72,6 @@ export async function executeGrounding(state: SatQueryState): Promise<SatQuerySt
       const { addTraceStep } = require('../agents/state');
       addTraceStep(state, `Specialist model`, 'failed', response.message);
     }
-  }`);
-      addTraceStep(state, 'Specialist grounding model', 'failed', 'Falling back');
-    }
   }
 
   // Fallback
