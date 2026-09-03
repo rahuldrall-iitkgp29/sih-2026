@@ -28,7 +28,7 @@ export async function executeVQA(state: SatQueryState): Promise<SatQueryState> {
   const model = modelRegistry.findModel(state.detectedTask!, state.inputType);
 
   // Try specialist model first
-  if (model && (model.status === 'available' || model.status === 'AVAILABLE')) {
+  if (model && (model.status === 'available')) {
     const formData = new FormData();
     // Assuming image paths are added appropriately, depending on the tool.
     // For single images:

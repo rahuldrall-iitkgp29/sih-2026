@@ -8,6 +8,8 @@ Architecture:
   FastAPI → Model Registry → Model Adapters → Pretrained Models
 """
 
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -82,3 +84,4 @@ async def list_models():
         "worker": get_worker_meta(),
         "models": model_registry.get_all_metadata()
     }
+

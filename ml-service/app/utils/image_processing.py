@@ -50,3 +50,19 @@ def validate_image_pair(image1_bytes: bytes, image2_bytes: bytes, filename1: str
         raise ValueError(f"Image dimensions do not match. Image 1: {img1.shape[:2]}, Image 2: {img2.shape[:2]}")
     
     return img1, img2
+
+def extract_image_metadata(image_bytes: bytes, filename: str) -> dict:
+    """
+    Extracts band ordering, nodata values, and tags from GeoTIFFs.
+    Does not modify the original data. Opens the TIFF separately.
+    """
+    meta = {"nodata": None, "colorinterp": []}
+    if filename.lower().endswith(('.tif', '.tiff', '.geotiff')):
+        try:
+            with rasterio.MemoryFile(image_bytes) as memfile:
+                with memfile.open() as dataset:
+                    meta["nodata"] = dataset.nodata
+                    meta["colorinterp"] = [color.name for color in dataset.colorinterp]
+        except Exception as e:
+            print(f"Failed to extract metadata: {e}")
+    return meta

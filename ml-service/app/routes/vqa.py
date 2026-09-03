@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form
 from app.models.registry import model_registry
 from app.models.base_model import ModelInput, ModelStatus
-from app.utils.image_processing import load_image_from_bytes
+from app.utils.image_processing import load_image_from_bytes, extract_image_metadata
 
 router = APIRouter()
 
@@ -21,7 +21,8 @@ async def vqa_endpoint(image: UploadFile = File(...), query: str = Form(...)):
     try:
         image_bytes = await image.read()
         img_array = load_image_from_bytes(image_bytes, image.filename)
-        input_data = ModelInput(images=[img_array], query=query)
+        image_meta = extract_image_metadata(image_bytes, image.filename)
+        input_data = ModelInput(images=[img_array], query=query, parameters={"image_metadata": image_meta})
         result = model.predict(input_data)
         
         if not result.success:

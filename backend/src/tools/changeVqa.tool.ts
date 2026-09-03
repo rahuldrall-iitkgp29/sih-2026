@@ -33,7 +33,7 @@ export async function executeChangeVqa(state: SatQueryState): Promise<SatQuerySt
   const model = modelRegistry.findModel(state.detectedTask!, state.inputType);
 
   // Try specialist
-  if (model && (model.status === 'available' || model.status === 'AVAILABLE')) {
+  if (model && (model.status === 'available')) {
     const formData = new FormData();
     // Assuming image paths are added appropriately, depending on the tool.
     // For single images:
@@ -73,9 +73,6 @@ export async function executeChangeVqa(state: SatQueryState): Promise<SatQuerySt
       logger.warn(`Specialist model failed: ${response.message} (Status: ${response.status}). Falling back...`);
       const { addTraceStep } = require('../agents/state');
       addTraceStep(state, `Specialist model`, 'failed', response.message);
-    }
-  }`);
-      addTraceStep(state, 'Specialist Change VQA', 'failed', 'Falling back');
     }
   }
 

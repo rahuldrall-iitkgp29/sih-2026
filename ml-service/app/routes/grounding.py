@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form
 from app.models.registry import model_registry
 from app.models.base_model import ModelInput, ModelStatus
-from app.utils.image_processing import load_image_from_bytes
+from app.utils.image_processing import load_image_from_bytes, extract_image_metadata
 
 router = APIRouter()
 
@@ -15,9 +15,10 @@ async def grounding_endpoint(image: UploadFile = File(...), query: str = Form(..
 
     try:
         image_bytes = await image.read()
+        metadata = extract_image_metadata(image_bytes)
         img_array = load_image_from_bytes(image_bytes, image.filename)
-        input_data = ModelInput(images=[img_array], query=query)
+        input_data = ModelInput(images=[img_array], query=query, parameters={"image_metadata": metadata})
         result = model.predict(input_data)
-        return {"success": result.success, "task": result.task, "status": ModelStatus.READY, "model": result.model, "boxes": result.data.get("boxes", []), "labels": result.data.get("labels", []), "confidence": result.confidence, "metadata": result.metadata}
+        return {"success": result.success, "task": result.task, "status": ModelStatus.READY, "model": result.model, "boxes": result.data.get("boxes", []), "labels": result.data.get("labels", []), "confidence": result.confidence, "metadata": result.metadata, "answer": result.data.get("answer", "")}
     except Exception as e:
         return {"success": False, "task": "grounding", "status": ModelStatus.ERROR, "model": model.model_id, "message": f"Inference error: {str(e)}"}

@@ -39,7 +39,7 @@ export async function executeOpticalSar(state: SatQueryState): Promise<SatQueryS
   const model = modelRegistry.findModel(state.detectedTask!, state.inputType);
 
   // Try specialist
-  if (model && (model.status === 'available' || model.status === 'AVAILABLE')) {
+  if (model && (model.status === 'available')) {
     const formData = new FormData();
     // Assuming image paths are added appropriately, depending on the tool.
     // For single images:
@@ -79,9 +79,6 @@ export async function executeOpticalSar(state: SatQueryState): Promise<SatQueryS
       logger.warn(`Specialist model failed: ${response.message} (Status: ${response.status}). Falling back...`);
       const { addTraceStep } = require('../agents/state');
       addTraceStep(state, `Specialist model`, 'failed', response.message);
-    }
-  }`);
-      addTraceStep(state, 'Specialist Optical-SAR model', 'failed', 'Falling back');
     }
   }
 

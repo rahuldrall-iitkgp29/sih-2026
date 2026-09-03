@@ -13,7 +13,7 @@ const envSchema = z.object({
   MONGODB_URI: z.string().default('mongodb://localhost:27017/satquery'),
 
   // General AI (agent reasoning + fallback)
-  AI_PROVIDER: z.enum(['gemini', 'openai']).default('gemini'),
+  AI_PROVIDER: z.enum(['gemini', 'openai', 'local', 'none']).default('local'),
   AI_API_KEY: z.string().default(''),
   VISION_MODEL: z.string().default(''),
   TEXT_MODEL: z.string().default(''),
@@ -71,3 +71,4 @@ export const SUPPORTED_IMAGE_FORMATS = [
 ];
 
 export const SUPPORTED_EXTENSIONS = ['.tif', '.tiff', '.png', '.jpg', '.jpeg', '.geotiff'];
+

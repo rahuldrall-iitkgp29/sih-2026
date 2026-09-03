@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 from app.models.registry import model_registry
 from app.models.base_model import ModelInput, ModelStatus
-from app.utils.image_processing import load_image_from_bytes
+from app.utils.image_processing import load_image_from_bytes, extract_image_metadata
 
 router = APIRouter()
 
@@ -15,8 +15,9 @@ async def caption_endpoint(image: UploadFile = File(...)):
 
     try:
         image_bytes = await image.read()
+        metadata = extract_image_metadata(image_bytes)
         img_array = load_image_from_bytes(image_bytes, image.filename)
-        input_data = ModelInput(images=[img_array])
+        input_data = ModelInput(images=[img_array], parameters={"image_metadata": metadata})
         result = model.predict(input_data)
         return {"success": result.success, "task": result.task, "status": ModelStatus.READY, "model": result.model, "caption": result.data.get("caption", ""), "confidence": result.confidence, "metadata": result.metadata}
     except Exception as e:

@@ -1,6 +1,6 @@
 """Change VQA Model Adapter for answering questions about bi-temporal changes."""
 from typing import Dict, Any
-from app.models.base_model import RemoteSensingModel, ModelInput, ModelOutput
+from app.models.base_model import RemoteSensingModel, ModelInput, ModelOutput, ModelStatus
 
 
 class ChangeVQAModel(RemoteSensingModel):
@@ -9,12 +9,13 @@ class ChangeVQAModel(RemoteSensingModel):
             return
         # INTEGRATION POINT: Load Change VQA model (e.g., CDVQA models)
         print(f"  Change VQA model configured: {self.model_id}")
+        self.status = ModelStatus.READY
 
     def predict(self, input_data: ModelInput) -> ModelOutput:
-        if not self._loaded:
-            return ModelOutput(success=False, model="change-vqa-model", task="CHANGE_VQA", confidence=0.0,
+        if not self.is_loaded:
+            return ModelOutput(success=False, status=ModelStatus.ERROR, model="change-vqa-model", task="CHANGE_VQA", confidence=0.0,
                                data={"error": "Model not loaded"})
-        return ModelOutput(success=False, model=self.model_id, task="CHANGE_VQA", confidence=0.0,
+        return ModelOutput(success=False, status=ModelStatus.ERROR, model=self.model_id, task="CHANGE_VQA", confidence=0.0,
                            data={"error": "Inference not implemented"})
 
     def get_metadata(self) -> Dict[str, Any]:
