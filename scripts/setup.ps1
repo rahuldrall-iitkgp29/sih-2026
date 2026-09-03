@@ -18,7 +18,7 @@ function Write-Heading ($Title) {
 }
 
 function Write-Success ($Message) {
-    Write-Host "[✓] $Message" -ForegroundColor Green
+    Write-Host "[OK] $Message" -ForegroundColor Green
 }
 
 function Write-Info ($Message) {
