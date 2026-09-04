@@ -15,7 +15,7 @@ async def caption_endpoint(image: UploadFile = File(...)):
 
     try:
         image_bytes = await image.read()
-        metadata = extract_image_metadata(image_bytes)
+        metadata = extract_image_metadata(image_bytes, image.filename)
         img_array = load_image_from_bytes(image_bytes, image.filename)
         input_data = ModelInput(images=[img_array], parameters={"image_metadata": metadata})
         result = model.predict(input_data)
