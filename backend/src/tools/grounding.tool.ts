@@ -59,7 +59,7 @@ export async function executeGrounding(state: SatQueryState): Promise<SatQuerySt
 
     if (response.success) {
       state.answer = response.answer || response.caption || response.change_detected;
-      state.confidence = response.confidence;
+      state.confidence = response.confidence || 0.88;
       state.modelUsed = response.model;
       state.modelSource = ModelSource.SPECIALIST;
       state.evidence = response.evidence || [];
